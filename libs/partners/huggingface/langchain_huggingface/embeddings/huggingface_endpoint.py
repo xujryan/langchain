@@ -40,6 +40,8 @@ class HuggingFaceEndpointEmbeddings(BaseModel, Embeddings):
     """Task to call the model with."""
     model_kwargs: Optional[dict] = None
     """Keyword arguments to pass to the model."""
+    timeout: Optional[float] = None
+    """The maximum number of seconds to wait for a response from the server."""
 
     huggingfacehub_api_token: Optional[str] = Field(
         default_factory=from_env("HUGGINGFACEHUB_API_TOKEN", default=None)
@@ -74,11 +76,13 @@ class HuggingFaceEndpointEmbeddings(BaseModel, Embeddings):
             client = InferenceClient(
                 model=self.model,
                 token=huggingfacehub_api_token,
+                timeout=self.timeout
             )
 
             async_client = AsyncInferenceClient(
                 model=self.model,
                 token=huggingfacehub_api_token,
+                timeout=self.timeout
             )
 
             if self.task not in VALID_TASKS:
